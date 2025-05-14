@@ -8,6 +8,7 @@ public class BookingResponse {
     @SerializedName("bookingid")
     @Expose
     private Integer bookingid;
+
     @SerializedName("booking")
     @Expose
     private Booking booking;

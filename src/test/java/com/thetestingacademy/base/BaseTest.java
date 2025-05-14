@@ -3,7 +3,9 @@ package com.thetestingacademy.base;
 import com.thetestingacademy.asserts.AssertActions;
 import com.thetestingacademy.endpoints.APIConstants;
 import com.thetestingacademy.modules.PayloadManager;
+import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
@@ -46,6 +48,26 @@ public class BaseTest {
                 .build().log().all();
 
         // before running any testcase we need the above url to be called
+
+    }
+
+        // Token is one thing that is required by almost all testcases,
+        // so it would be a good practice to add getToken in BaseTest class
+        // Token is generally generated onetime & is applicable throughout the session
+
+        // we don't add @BeforeTest because it shall start generating Token for every test,
+        // and we don't want to generate token for each test
+        // 1 token is enough for the entire test case integration that is why just a normal function
+      public  String getToken(){
+        requestSpecification = RestAssured.given();
+        requestSpecification.baseUri(APIConstants.BASE_URL)
+                .basePath(APIConstants.AUTH_URL);
+        // Setting the payload
+        String payload = payloadManager.setAuthPayload();
+        // Get the Token from above response
+        response = requestSpecification.contentType(ContentType.JSON).body(payload).when().post();
+        String token = payloadManager.getTokenFromJSON(response.asString());
+        return token;
 
     }
 
